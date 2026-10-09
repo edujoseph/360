@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vídeo 360 - Guaraná Mais Açaí</title>
+    <style>
+        body {
+            /* Fundo roxo inspirado na embalagem do açaí */
+            background-color: #5b0e7a; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+            font-family: sans-serif;
+        }
+        
+        .container {
+            text-align: center;
+        }
+
+        .video-360 {
+            width: 400px;
+            max-width: 90vw;
+            border-radius: 10px;
+            
+            /* O mix-blend-mode: screen faz com que os píxeis pretos do vídeo se tornem transparentes, 
+               deixando ver o fundo roxo da página, enquanto mantém as cores claras do copo. */
+            mix-blend-mode: screen; 
+            
+            /* Um pequeno brilho para destacar o copo */
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+        }
+        
+        p {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Guaraná Mais Açaí - 360º</h2>
+        
+        <!-- O vídeo reproduz automaticamente (autoplay), em loop, e sem som (muted) -->
+        <!-- Substitua 'seu_video.mp4' pelo ficheiro de vídeo que fez download -->
+        <video class="video-360" src="seu_video.mp4" autoplay loop muted playsinline></video>
+        
+        <p>Efeito de transparência feito com CSS (mix-blend-mode)</p>
+    </div>
+</body>
+</html>
