@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guaraná Mais Açaí 360°</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="showcase">
+    <!-- Estado da vitrine: 360° automático ou uma vista fixa (radio hack, sem JS) -->
+    <input class="sr" type="radio" name="vista" id="auto" checked>
+    <input class="sr" type="radio" name="vista" id="v1">
+    <input class="sr" type="radio" name="vista" id="v2">
+    <input class="sr" type="radio" name="vista" id="v3">
+    <input class="sr" type="radio" name="vista" id="v4">
+
+    <h1 class="title">Guaraná <span>Mais Açaí</span></h1>
+
+    <div class="stage">
+      <div class="cup" role="img" aria-label="Copo Guaraná Mais Açaí 290 mL girando 360 graus">
+        <img class="frame f1" src="img/01-frente.png"  alt="" width="821" height="1292">
+        <img class="frame f2" src="img/02-lateral.png" alt="" width="903" height="1419">
+        <img class="frame f3" src="img/03-verso.png"   alt="" width="919" height="1400">
+        <img class="frame f4" src="img/04-lateral.png" alt="" width="929" height="1424">
+
+        <!-- Passe o mouse da esquerda para a direita para girar manualmente -->
+        <div class="zones" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="shadow"></div>
+    </div>
+
+    <nav class="controls" aria-label="Vistas do copo">
+      <label for="auto">360°</label>
+      <label for="v1">Frente</label>
+      <label for="v2">Lateral</label>
+      <label for="v3">Verso</label>
+      <label for="v4">Lateral</label>
+    </nav>
+
+    <p class="hint">Passe o mouse sobre o copo para girar</p>
+  </main>
+</body>
+</html>

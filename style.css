@@ -1,0 +1,227 @@
+/* ==========================================================
+   Copo Guaraná Mais Açaí — animação 360° só com HTML/CSS
+   4 vistas em ordem de rotação: frente → lateral → verso → lateral
+   ========================================================== */
+
+:root {
+  --dur: 6s;                        /* volta completa */
+  --slot: calc(var(--dur) / 4);     /* tempo de cada vista */
+  --fade: 0.45s;                    /* transição entre vistas (7.5% de --dur) */
+
+  --bg-1: #3a1257;
+  --bg-2: #13041f;
+  --accent: #f6c400;
+  --text: #fff;
+  --muted: rgba(255, 255, 255, 0.6);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgba(140, 60, 190, 0.45), transparent 70%),
+    radial-gradient(ellipse at 50% 30%, var(--bg-1), var(--bg-2) 75%);
+  background-color: var(--bg-2);
+  overflow-x: hidden;
+}
+
+.showcase {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1.25rem;
+  padding: 2rem 16px;
+}
+
+.sr {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #20b04b;
+  text-shadow: 0 2px 0 var(--accent);
+}
+.title span { color: #ff6a13; }
+
+/* ---------- Palco ---------- */
+
+.stage {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.cup {
+  position: relative;
+  height: min(64vh, 560px, (100vw - 32px) / 0.645);
+  aspect-ratio: 0.645;              /* média das 4 fotos recortadas */
+  animation: float 4s ease-in-out infinite;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;                 /* alinha a silhueta das 4 vistas (≤2% de ajuste) */
+  opacity: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.35));
+
+  /* 360° automático */
+  animation: giro var(--dur) ease-in-out infinite;
+  animation-delay: calc(var(--i) * var(--slot) - var(--fade) - var(--dur));
+}
+.f1 { --i: 0; }
+.f2 { --i: 1; }
+.f3 { --i: 2; }
+.f4 { --i: 3; }
+
+/* Cada vista entra por cima da anterior (z-index 3), a anterior só some
+   depois que a nova está 100% opaca — o copo nunca fica translúcido. */
+@keyframes giro {
+  0%     { opacity: 0; z-index: 3; transform: translateX(2%); }
+  7.5%   { opacity: 1; z-index: 3; transform: none; }
+  25%    { opacity: 1; z-index: 3; transform: none; }
+  25.01% { opacity: 1; z-index: 2; transform: none; }
+  32.5%  { opacity: 1; z-index: 2; transform: translateX(-2%); }
+  32.51% { opacity: 0; z-index: 1; transform: translateX(-2%); }
+  100%   { opacity: 0; z-index: 1; transform: translateX(2%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+.shadow {
+  width: 72%;
+  height: 22px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.6), transparent);
+  animation: shadow 4s ease-in-out infinite;
+}
+
+@keyframes shadow {
+  0%, 100% { transform: scaleX(1);    opacity: 1; }
+  50%      { transform: scaleX(0.88); opacity: 0.7; }
+}
+
+/* ---------- Giro manual (hover) e vistas fixas (radios) ---------- */
+
+/* Zonas invisíveis: mover o mouse da esquerda p/ direita gira o copo */
+.zones {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  cursor: ew-resize;
+}
+
+/* Modo manual: para o 360° e mostra só a vista escolhida.
+   :where() zera a especificidade para as regras de vista ativa vencerem. */
+:where(.showcase:has(.sr:checked:not(#auto)), .cup:has(.zones span:hover)) .frame {
+  animation: none;
+  opacity: 0;
+  z-index: 1;
+  transform: none;
+  transition: opacity 0.3s 0.3s;    /* a anterior some depois que a nova entrou */
+}
+
+/* Vista fixa escolhida nos botões (o hover tem prioridade) */
+.showcase:has(#v1:checked) .cup:not(:has(.zones span:hover)) .f1,
+.showcase:has(#v2:checked) .cup:not(:has(.zones span:hover)) .f2,
+.showcase:has(#v3:checked) .cup:not(:has(.zones span:hover)) .f3,
+.showcase:has(#v4:checked) .cup:not(:has(.zones span:hover)) .f4,
+/* Vista sob o cursor */
+.cup:has(.zones span:nth-child(1):hover) .f1,
+.cup:has(.zones span:nth-child(2):hover) .f2,
+.cup:has(.zones span:nth-child(3):hover) .f3,
+.cup:has(.zones span:nth-child(4):hover) .f4 {
+  opacity: 1;
+  z-index: 2;
+  transition: opacity 0.3s;
+}
+
+/* ---------- Controles ---------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.controls label {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.controls label:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.showcase:has(#auto:checked) label[for="auto"],
+.showcase:has(#v1:checked) label[for="v1"],
+.showcase:has(#v2:checked) label[for="v2"],
+.showcase:has(#v3:checked) label[for="v3"],
+.showcase:has(#v4:checked) label[for="v4"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #2a0b3d;
+}
+
+.showcase:has(.sr:focus-visible) .controls label {
+  outline: none;
+}
+#auto:focus-visible ~ .controls label[for="auto"],
+#v1:focus-visible ~ .controls label[for="v1"],
+#v2:focus-visible ~ .controls label[for="v2"],
+#v3:focus-visible ~ .controls label[for="v3"],
+#v4:focus-visible ~ .controls label[for="v4"] {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@media (hover: none) {
+  .hint { display: none; }
+}
+
+/* Sem animação automática para quem prefere movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  .cup, .shadow { animation: none; }
+  .frame { animation: none; }
+  .showcase:has(#auto:checked) .cup:not(:has(.zones span:hover)) .f1 { opacity: 1; }
+}
